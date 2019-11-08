@@ -15,9 +15,10 @@
 
 - name: prerequisites installed
   apt:
-    pkg:
+    name:
       - python-ldap
       - ldap-utils
+    state: present
 
 - name: Set olcAttributeOptions attribute
   ldap_attr:
