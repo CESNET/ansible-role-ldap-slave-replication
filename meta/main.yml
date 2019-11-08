@@ -1,0 +1,18 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: ldap-slave-replication
+  author: Jan Pavlíček
+  company: CESNET
+  description: configure slave replication on LDAP server
+  license: "Apache 2.0"
+  min_ansible_version: 2.5
+  platforms:
+    - name: Debian
+      versions:
+        - buster
+  galaxy_tags:
+    - metacentrum
+    - system
+  

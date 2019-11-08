@@ -1,0 +1,64 @@
+---
+- name: Check that varibales are defined
+  assert:
+    that:
+      - slapd_base_dn is defined
+      - slapd_base_dn_admin is defined
+      - master_dns is defined
+      - master_admin_password is defined
+
+- name: Check if OpenLdap is installed
+  shell: "dpkg-query -l 'slapd'"
+  register: result
+  failed_when: "'no packages found matching' in result.stderr"
+  changed_when: false
+
+- name: prerequisites installed
+  apt:
+    pkg:
+      - python-ldap
+      - ldap-utils
+
+- name: Set olcAttributeOptions attribute
+  ldap_attr:
+    dn: cn=config
+    name: "olcAttributeOptions"
+    values: "x-ns-"
+    state: exact
+
+- name: Set indexes (olcDbIndex attribute, perun schemas have to be included in ldap)
+  ldap_attr:
+    dn: olcDatabase={1}mdb,cn=config
+    name: olcDbIndex
+    values: "{{ item }}"
+    state: present
+  with_items:
+    - cn,uid eq
+    - uidNumber,gidNumber eq
+    - member,memberUid eq
+    - perunVoId eq
+    - eduPersonPrincipalNames eq
+    - entryCSN,entryUUID eq
+    - login eq
+    - memberOfPerunVo eq
+    - userCertificateSubject eq
+    - entityID eq
+    - assignedToResourceId eq
+
+- name: Add sync replication
+  ldap_attr:
+    dn: olcDatabase={1}mdb,cn=config
+    name: olcSyncRepl
+    state: present
+    values:
+      - >-
+        {0}rid=000
+        provider=ldap://{{ master_dns }}/
+        type=refreshAndPersist
+        retry="5 5 300 +"
+        attrs="*,+"
+        bindmethod=simple
+        searchbase="{{ slapd_base_dn }}"
+        binddn="{{ slapd_base_dn_admin }}"
+        credentials={{ master_admin_password }}
+        tls_reqcert=never
