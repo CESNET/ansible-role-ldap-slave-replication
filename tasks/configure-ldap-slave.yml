@@ -7,11 +7,10 @@
       - master_dns is defined
       - master_admin_password is defined
 
-- name: Check if OpenLdap is installed
-  shell: "dpkg-query -l 'slapd'"
-  register: result
-  failed_when: "'no packages found matching' in result.stderr"
-  changed_when: false
+- name: Check if OpenLdap is running if not start it
+  service:
+    name: slapd
+    state: started
 
 - name: prerequisites installed
   apt:
