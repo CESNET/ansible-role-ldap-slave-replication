@@ -3,9 +3,9 @@
   assert:
     that:
       - slapd_base_dn is defined
-      - slapd_base_dn_admin is defined
+      - replication_user_dn is defined
       - master_dns is defined
-      - master_admin_password is defined
+      - replication_user_password is defined
 
 - name: Check if OpenLdap is running if not start it
   service:
@@ -49,7 +49,7 @@
   ldap_attr:
     dn: olcDatabase={1}mdb,cn=config
     name: olcSyncRepl
-    state: present
+    state: exact
     values:
       - >-
         {0}rid=000
@@ -59,6 +59,10 @@
         attrs="*,+"
         bindmethod=simple
         searchbase="{{ slapd_base_dn }}"
-        binddn="{{ slapd_base_dn_admin }}"
-        credentials={{ master_admin_password }}
+        binddn="{{ replication_user_dn }}"
+        credentials={{ replication_user_password }}
         tls_reqcert=never
+  register: result
+  failed_when: >
+    (result.failed == True) and
+    ("'desc': 'Type or value exists'" not in result.details)

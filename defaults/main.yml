@@ -1,6 +1,6 @@
 ---
 # defaults file for ansible-ldap
 slapd_base_dn: "dc=perun,dc=cesnet,dc=cz"
-slapd_base_dn_admin: "cn=admin,{{ slapd_base_dn }}"
-master_dns: "78.128.3.24"
-master_admin_password: "test"
+replication_user_dn: "uid=repluser,dc=perun,dc=cesnet,dc=cz"
+master_dns: "78.128.251.65"
+replication_user_password: "test"

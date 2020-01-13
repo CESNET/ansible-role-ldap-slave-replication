@@ -13,9 +13,9 @@ Role Variables
 --------------
 
 - slapd_base_dn - base dn of ldap server
-- slapd_base_dn_admin - dn of admin
+- replication_user_dn - dn of replication user
 - master_dns - adress to master ldap server
-- master_admin_password - password to admin of master ldap server
+- replication_user_password - password to replication user of master ldap server
 
 Example Playbook
 ----------------
@@ -27,5 +27,6 @@ Example Playbook
       vars:
         slapd_base_dn: "dc=perun,dc=cesnet,dc=cz"
         master_dns: "78.128.3.24"
-        master_admin_password: "test"
+        replication_user_dn: "uid=repluser,dc=perun,dc=cesnet,dc=cz"
+        replication_user_password: "test"
 ```
